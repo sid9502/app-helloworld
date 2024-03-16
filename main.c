@@ -1,55 +1,31 @@
+#include <uk/atomic.h>
+#include <uk/spinlock.h>
+#include <uk/mutex.h>
+#include <uk/semaphore.h>
+#include <uk/rwlock.h>
+#include <uk/plat/lcpu.h>
+#include <uk/sched.h>
+#include <uk/schedcoop.h>
+#include <stdlib.h>
+#include <uk/vmem.h>
+#include <string.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
 
-/* Import user configuration: */
-#ifdef __Unikraft__
-#include <uk/config.h>
-#endif /* __Unikraft__ */
+#define NUM_THREADS	10
 
-#if CONFIG_APPHELLOWORLD_SPINNER
-#include <time.h>
-#include <errno.h>
-#include "monkey.h"
 
-static void millisleep(unsigned int millisec)
-{
-	struct timespec ts;
-	int ret;
 
-	ts.tv_sec = millisec / 1000;
-	ts.tv_nsec = (millisec % 1000) * 1000000;
-	do
-		ret = nanosleep(&ts, &ts);
-	while (ret && errno == EINTR);
+
+int main() {
+	
+	printf("hello from main\n");
+	
 }
-#endif /* CONFIG_APPHELLOWORLD_SPINNER */
 
-int main(int argc, char *argv[])
-{
-#if CONFIG_APPHELLOWORLD_PRINTARGS || CONFIG_APPHELLOWORLD_SPINNER
-	int i;
-#endif
 
-	printf("Hello world!\n");
 
-#if CONFIG_APPHELLOWORLD_PRINTARGS
-	printf("Arguments: ");
-	for (i=0; i<argc; ++i)
-		printf(" \"%s\"", argv[i]);
-	printf("\n");
-#endif /* CONFIG_APPHELLOWORLD_PRINTARGS */
-
-#if CONFIG_APPHELLOWORLD_SPINNER
-	i = 0;
-	printf("\n\n\n");
-	for (;;) {
-		i %= (monkey3_frame_count * 3);
-		printf("\r\033[2A %s \n", monkey3[i++]);
-		printf(" %s \n",          monkey3[i++]);
-		printf(" %s ",            monkey3[i++]);
-		fflush(stdout);
-		millisleep(250);
-	}
-#endif /* CONFIG_APPHELLOWORLD_SPINNER */
-
-	return 0;
-}
